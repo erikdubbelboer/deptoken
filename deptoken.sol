@@ -66,6 +66,14 @@ contract Frontend {
             throw;
         }
     }
+
+    function destruct(address _to) external {
+        if (msg.sender != owner) {
+            throw;
+        }
+
+        selfdestruct(_to);
+    }
 }
 
 contract Storage {
@@ -141,6 +149,14 @@ contract Storage {
         }
 
         minted = _minted;
+    }
+
+    function destruct(address _to) external {
+        if (msg.sender != owner) {
+            throw;
+        }
+
+        selfdestruct(_to);
     }
 }
 
@@ -258,5 +274,13 @@ contract Backend is ERC20Interface {
         }
 
         _to.transfer(_amount);
+    }
+
+    function destruct(address _to) external {
+        if (msg.sender != owner) {
+            throw;
+        }
+
+        selfdestruct(_to);
     }
 }
