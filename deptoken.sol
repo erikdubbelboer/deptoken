@@ -29,7 +29,7 @@ contract Frontend {
 
     function setOwner(address _owner) external {
         if (msg.sender != owner) {
-            throw;
+            revert();
         }
 
         owner = _owner;
@@ -76,7 +76,7 @@ contract Frontend {
     // Internal transfer function that can only be used by our ERC20 interface contract.
     function internalTransfer(address _sender, address _to, uint256 _amount) external returns (bool) {
         if (msg.sender != erc20) {
-            throw;
+            revert();
         }
 
         uint256 cost = _transferCost;
@@ -119,7 +119,7 @@ contract Frontend {
     // Internal transferFrom function that can only be used by our ERC20 interface contract.
     function internalTransferFrom(address _sender, address _from, address _to, uint256 _amount) external returns (bool) {
         if (msg.sender != erc20) {
-            throw;
+            revert();
         }
 
         uint256 cost = _transferCost;
@@ -151,7 +151,7 @@ contract Frontend {
     // Internal approve function that can only be used by our ERC20 interface contract.
     function internalApprove(address _sender, address _spender, uint256 _amount) external returns (bool) {
         if (msg.sender != erc20) {
-            throw;
+            revert();
         }
 
         backend.setAllowance(_sender, _spender, _amount);
@@ -165,19 +165,19 @@ contract Frontend {
 
     function buy() payable external returns (uint256) {
         if (block.number <= mintAfterBlock) {
-            throw;
+            revert();
         }
         uint256 amount = msg.value / price;
         uint256 minted = backend.getMinted();
         if (minted + amount < minted) {
-            throw;
+            revert();
         }
         if (minted + amount > total) {
-            throw;
+            revert();
         }
         uint256 balance = backend.getBalance(msg.sender);
         if (balance + amount < balance) {
-            throw;
+            revert();
         }
         backend.setBalance(msg.sender, balance + amount);
         backend.setMinted(minted + amount);
@@ -187,7 +187,7 @@ contract Frontend {
 
     function withdraw(address _to, uint256 _amount) external {
         if (msg.sender != owner) {
-            throw;
+            revert();
         }
 
         _to.transfer(_amount);
@@ -195,7 +195,7 @@ contract Frontend {
 
     function destruct(address _to) external {
         if (msg.sender != owner) {
-            throw;
+            revert();
         }
 
         selfdestruct(_to);
@@ -224,7 +224,7 @@ contract Backend {
 
     function setOwner(address _owner) external {
         if (msg.sender != owner) {
-            throw;
+            revert();
         }
 
         owner = _owner;
@@ -236,7 +236,7 @@ contract Backend {
 
     function setFrontend(address _frontend, bool allowed) external {
         if (msg.sender != owner) {
-            throw;
+            revert();
         }
         frontends[_frontend] = allowed;
     }
@@ -247,7 +247,7 @@ contract Backend {
 
     function setBalance(address _owner, uint256 _amount) external {
         if (!frontends[msg.sender]) {
-            throw;
+            revert();
         }
 
         balances[_owner] = _amount;
@@ -259,7 +259,7 @@ contract Backend {
 
     function setAllowance(address _owner, address _spender, uint256 _amount) external {
         if (!frontends[msg.sender]) {
-            throw;
+            revert();
         }
 
         allowed[_owner][_spender] = _amount;
@@ -271,7 +271,7 @@ contract Backend {
 
     function setMinted(uint256 _minted) external {
         if (!frontends[msg.sender]) {
-            throw;
+            revert();
         }
 
         minted = _minted;
@@ -279,7 +279,7 @@ contract Backend {
 
     function destruct(address _to) external {
         if (msg.sender != owner) {
-            throw;
+            revert();
         }
 
         selfdestruct(_to);
@@ -306,7 +306,7 @@ contract ERC20Interface {
 
     function setOwner(address _owner) external {
         if (msg.sender != owner) {
-            throw;
+            revert();
         }
 
         owner = _owner;
@@ -318,7 +318,7 @@ contract ERC20Interface {
 
     function setFrontend(address _frontend) external {
         if (msg.sender != owner) {
-            throw;
+            revert();
         }
 
         frontend = Frontend(_frontend);
